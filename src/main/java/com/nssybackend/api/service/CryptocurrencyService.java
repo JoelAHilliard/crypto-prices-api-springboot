@@ -8,6 +8,7 @@ import com.nssybackend.api.repository.CryptocurrencyRepository;
 import org.springframework.stereotype.Service;
 
 import com.nssybackend.api.model.*;
+import com.google.gson.Gson;
 
 import java.util.List;
 import java.util.Optional;
@@ -46,8 +47,9 @@ public class CryptocurrencyService {
     }
 
     //returns all cryptos with name, symbol and the most recent price entry.
-    public List<CryptocurrencyModel> getPriceData() 
+    public String getPriceData() 
     {
+        //create projection and slice operator
         ProjectionOperation projectionOperation = Aggregation
                 .project("name","symbol")
                 .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-1))
@@ -58,28 +60,69 @@ public class CryptocurrencyService {
                 projectionOperation
         );
 
+        //perform aggregation
         AggregationResults<CryptocurrencyModel> results = mongoOperations.aggregate(aggregation, "crypto_prices", CryptocurrencyModel.class);
         
         List<CryptocurrencyModel> mappedResults = results.getMappedResults();
 
-        return mappedResults;
+        //serialize into JSON for consumption
+        Gson gson = new Gson();
+        
+        String json = "";
+
+        json = gson.toJson(mappedResults);
+
+        return json;
     }
 
-    public List<CryptocurrencyModel> getGraphData(String ticker, String timeframe) 
+    public String getGraphData(String ticker, String timeframe) 
     {
+        int elementsPerHour = 6;
+        int sliceCount = 6 * 24;
+
+        //calculte how many documents to return based off timeframe
+
+        switch(timeframe)
+        {
+            case "12hr":
+                sliceCount = elementsPerHour * 12;
+                break;
+            case "4hr":
+                sliceCount = elementsPerHour * 4;
+                break;
+            case "1week":
+                sliceCount = elementsPerHour * 24 * 7;
+                break;
+            case "1month":
+                sliceCount = elementsPerHour * 24 * 30; // Assume 30 days in a month
+                break;
+            case "max":
+                sliceCount = -1;
+            default:
+                sliceCount = elementsPerHour * 24;
+
+        }
 
         //create match criteria and operation
         Criteria criteria = Criteria.where("symbol").is(ticker);
 
         MatchOperation matchOperation = Aggregation.match(criteria);
         
-        //return latest item count
-        ProjectionOperation projectionOperation = Aggregation
-                .project("name","symbol")
-                .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-50))
-                .as("prices");
-                
+        ProjectionOperation projectionOperation;
 
+        if(timeframe == "max")
+        {
+            projectionOperation = Aggregation
+                .project("name","symbol","prices");
+        }
+        else 
+        {
+            projectionOperation = Aggregation
+                .project("name","symbol")
+                .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-sliceCount))
+                .as("prices");
+        }
+        
         Aggregation aggregation = Aggregation.newAggregation(
                 matchOperation,
                 projectionOperation
@@ -88,7 +131,14 @@ public class CryptocurrencyService {
         AggregationResults<CryptocurrencyModel> results = mongoOperations.aggregate(aggregation, "crypto_prices", CryptocurrencyModel.class);
         
         List<CryptocurrencyModel> mappedResults = results.getMappedResults();
+        
+        //serialize into JSON for consumption
+        Gson gson = new Gson();
+        
+        String json = "";
 
-        return mappedResults;
+        json = gson.toJson(mappedResults);
+
+        return json;
     }
 }
