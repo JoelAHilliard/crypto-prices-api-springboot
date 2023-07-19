@@ -39,15 +39,18 @@ public class CryptocurrencyService {
         return cryptocurrencyRepository.findAll();
     }
 
-    public CryptocurrencyModel getSingleCryptocurrency() {
+    public CryptocurrencyModel getSingleCryptocurrency() 
+    {
         Optional<CryptocurrencyModel> optionalCryptocurrency = cryptocurrencyRepository.findById("6430ac5b99eee7a6b77b8861");
         return optionalCryptocurrency.orElse(null);
     }
 
-    public List<CryptocurrencyModel> getAllCryptocurrencyNames() {
+    //returns all cryptos with name, symbol and the most recent price entry.
+    public List<CryptocurrencyModel> getPriceData() 
+    {
         ProjectionOperation projectionOperation = Aggregation
                 .project("name","symbol")
-                .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(5))
+                .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-1))
                 .as("prices");
 
         TypedAggregation<CryptocurrencyModel> aggregation = Aggregation.newAggregation(
@@ -62,4 +65,30 @@ public class CryptocurrencyService {
         return mappedResults;
     }
 
+    public List<CryptocurrencyModel> getGraphData(String ticker, String timeframe) 
+    {
+
+        //create match criteria and operation
+        Criteria criteria = Criteria.where("symbol").is(ticker);
+
+        MatchOperation matchOperation = Aggregation.match(criteria);
+        
+        //return latest item count
+        ProjectionOperation projectionOperation = Aggregation
+                .project("name","symbol")
+                .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-50))
+                .as("prices");
+                
+
+        Aggregation aggregation = Aggregation.newAggregation(
+                matchOperation,
+                projectionOperation
+        );
+
+        AggregationResults<CryptocurrencyModel> results = mongoOperations.aggregate(aggregation, "crypto_prices", CryptocurrencyModel.class);
+        
+        List<CryptocurrencyModel> mappedResults = results.getMappedResults();
+
+        return mappedResults;
+    }
 }

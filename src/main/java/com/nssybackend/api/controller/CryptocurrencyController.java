@@ -2,8 +2,7 @@ package com.nssybackend.api;
 import com.nssybackend.api.model.Price;
 
 import org.json.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.nssybackend.api.service.CryptocurrencyService;
 import com.nssybackend.api.model.CryptocurrencyModel;
@@ -22,20 +21,33 @@ public class CryptocurrencyController {
 
     @GetMapping("/")
     public String index() {
-       
         return "Hello, World!";
     }
 
-    @GetMapping("/crypto")
+    @GetMapping("/priceData")
     public String crypto()
     {
-        List<CryptocurrencyModel> names = cryptoService.getAllCryptocurrencyNames();
+        List<CryptocurrencyModel> priceData = cryptoService.getPriceData();
         
         Gson gson = new Gson();
         
         String json = "";
-            
-        json = gson.toJson(names);
+
+        json = gson.toJson(priceData);
+        
+        return json;
+    }
+
+    @GetMapping("/getGraphData")
+    public String graph(@RequestParam String symbol, @RequestParam String timeframe)
+    {
+        List<CryptocurrencyModel> data = cryptoService.getGraphData(symbol,timeframe);
+        
+        Gson gson = new Gson();
+        
+        String json = "";
+
+        json = gson.toJson(data);
         
         return json;
     }
