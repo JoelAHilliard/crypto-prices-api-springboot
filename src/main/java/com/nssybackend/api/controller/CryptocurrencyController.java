@@ -7,7 +7,7 @@ import com.nssybackend.api.service.CryptocurrencyService;
 import com.nssybackend.api.model.CryptocurrencyModel;
 
 
-
+@CrossOrigin
 @RestController
 public class CryptocurrencyController {
 
@@ -25,7 +25,6 @@ public class CryptocurrencyController {
     {
         return cryptoService.getPriceData();
     }
-    @CrossOrigin
     @GetMapping("/getGraphData")
     public String graph(@RequestParam String symbol, @RequestParam String timeframe)
     {
