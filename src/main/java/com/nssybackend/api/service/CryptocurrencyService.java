@@ -1,6 +1,5 @@
 
 package com.nssybackend.api.service;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nssybackend.api.repository.CryptocurrencyRepository;
@@ -11,11 +10,7 @@ import com.nssybackend.api.model.*;
 import com.google.gson.Gson;
 
 import java.util.List;
-import java.util.Optional;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Field;
 import org.springframework.data.mongodb.core.MongoOperations;
 
 import org.springframework.data.mongodb.core.aggregation.*;
@@ -23,27 +18,13 @@ import org.springframework.data.mongodb.core.aggregation.*;
 public class CryptocurrencyService {
 
     @Autowired
-    MongoTemplate mongoTemplate;
-
-    @Autowired
     MongoOperations mongoOperations;
-
 
     private final CryptocurrencyRepository cryptocurrencyRepository;
 
     @Autowired
     public CryptocurrencyService(CryptocurrencyRepository cryptocurrencyRepository) {
         this.cryptocurrencyRepository = cryptocurrencyRepository;
-    }
-
-    public List<CryptocurrencyModel> getAllCryptocurrencies() {
-        return cryptocurrencyRepository.findAll();
-    }
-
-    public CryptocurrencyModel getSingleCryptocurrency() 
-    {
-        Optional<CryptocurrencyModel> optionalCryptocurrency = cryptocurrencyRepository.findById("6430ac5b99eee7a6b77b8861");
-        return optionalCryptocurrency.orElse(null);
     }
 
     //returns all cryptos with name, symbol and the most recent price entry.
@@ -78,10 +59,19 @@ public class CryptocurrencyService {
     public String getGraphData(String ticker, String timeframe) 
     {
         int elementsPerHour = 6;
+        
         int sliceCount = 6 * 24;
 
-        //calculte how many documents to return based off timeframe
+        //create match criteria and operation
 
+        Criteria criteria = Criteria.where("symbol").is(ticker);
+
+        MatchOperation matchOperation = Aggregation.match(criteria);
+        
+        ProjectionOperation projectionOperation;
+        
+        
+        //calculte how many documents to return based off timeframe
         switch(timeframe)
         {
             case "12hr":
@@ -102,13 +92,6 @@ public class CryptocurrencyService {
                 sliceCount = elementsPerHour * 24;
 
         }
-
-        //create match criteria and operation
-        Criteria criteria = Criteria.where("symbol").is(ticker);
-
-        MatchOperation matchOperation = Aggregation.match(criteria);
-        
-        ProjectionOperation projectionOperation;
 
         if(timeframe == "max")
         {

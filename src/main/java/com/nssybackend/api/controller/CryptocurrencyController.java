@@ -1,6 +1,6 @@
 package com.nssybackend.api;
-import com.nssybackend.api.model.Price;
 
+import com.nssybackend.api.model.Price;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.nssybackend.api.service.CryptocurrencyService;
@@ -17,7 +17,7 @@ public class CryptocurrencyController {
 
     @GetMapping("/")
     public String index() {
-        return "Hello, World!";
+        return "Nssy";
     }
 
     @GetMapping("/priceData")
@@ -30,7 +30,5 @@ public class CryptocurrencyController {
     public String graph(@RequestParam String symbol, @RequestParam String timeframe)
     {
         return cryptoService.getGraphData(symbol,timeframe);
-    }
-
-    
+    }    
 }
