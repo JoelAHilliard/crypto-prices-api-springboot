@@ -70,8 +70,8 @@ public class CryptocurrencyService {
         
         ProjectionOperation projectionOperation;
         
-        
         //calculte how many documents to return based off timeframe
+        
         switch(timeframe)
         {
             case "12hr":
@@ -98,6 +98,7 @@ public class CryptocurrencyService {
             projectionOperation = Aggregation
                 .project("name","symbol","prices");
         }
+        
         else 
         {
             projectionOperation = Aggregation

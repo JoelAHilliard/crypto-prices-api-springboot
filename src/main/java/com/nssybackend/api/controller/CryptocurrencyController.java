@@ -25,7 +25,7 @@ public class CryptocurrencyController {
     {
         return cryptoService.getPriceData();
     }
-
+    @CrossOrigin
     @GetMapping("/getGraphData")
     public String graph(@RequestParam String symbol, @RequestParam String timeframe)
     {
