@@ -74,6 +74,8 @@ public class CryptocurrencyService {
         
         switch(timeframe)
         {
+            case "15m":
+                sliceCount = 6;
             case "12hr":
                 sliceCount = elementsPerHour * 12;
                 break;
