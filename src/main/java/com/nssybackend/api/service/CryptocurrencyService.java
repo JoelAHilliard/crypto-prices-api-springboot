@@ -90,12 +90,13 @@ public class CryptocurrencyService {
                 break;
             case "max":
                 sliceCount = -1;
+                break;
             default:
                 sliceCount = elementsPerHour * 24;
 
         }
 
-        if(timeframe == "max")
+        if(sliceCount == -1)
         {
             projectionOperation = Aggregation
                 .project("name","symbol","prices");
@@ -103,6 +104,7 @@ public class CryptocurrencyService {
         
         else 
         {
+
             projectionOperation = Aggregation
                 .project("name","symbol")
                 .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-sliceCount))
