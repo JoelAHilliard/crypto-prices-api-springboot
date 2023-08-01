@@ -32,7 +32,7 @@ public class CryptocurrencyService {
     {
         //create projection and slice operator
         ProjectionOperation projectionOperation = Aggregation
-                .project("name","symbol")
+                .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","ath","ath_change_percentage","ath_date","atl","atl_change_percentage","atl_date")
                 .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-1))
                 .as("prices");
 
