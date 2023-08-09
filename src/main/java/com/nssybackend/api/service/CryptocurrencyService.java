@@ -118,7 +118,7 @@ public class CryptocurrencyService {
         
         //serialize into JSON for consumption
         Gson gson = new Gson();
-        
+
         return gson.toJson(mappedResults);
     }
 
@@ -128,7 +128,7 @@ public class CryptocurrencyService {
         int sliceCount = 24 * 7;
 
         ProjectionOperation projectionOperation = Aggregation
-                .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","ath","ath_change_percentage","ath_date","atl","atl_change_percentage","atl_date","weeklyChange","dailyChange","monthlyChange")
+                .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","weeklyChange","dailyChange","monthlyChange")
                 .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-sliceCount))
                 .as("prices");
 
