@@ -30,4 +30,9 @@ public class CryptocurrencyController {
     {
         return cryptoService.getGraphData(symbol,timeframe);
     }    
+    @GetMapping("/getMarketData")
+    public String marketData()
+    {
+        return cryptoService.getMarketData();
+    }    
 }

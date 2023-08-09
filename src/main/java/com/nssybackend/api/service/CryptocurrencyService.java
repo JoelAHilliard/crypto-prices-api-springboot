@@ -32,7 +32,7 @@ public class CryptocurrencyService {
     {
         //create projection and slice operator
         ProjectionOperation projectionOperation = Aggregation
-                .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","ath","ath_change_percentage","ath_date","atl","atl_change_percentage","atl_date")
+                .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","ath","ath_change_percentage","ath_date","atl","atl_change_percentage","atl_date","weeklyChange","dailyChange","monthlyChange")
                 .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-1))
                 .as("prices");
 
@@ -49,11 +49,7 @@ public class CryptocurrencyService {
         //serialize into JSON for consumption
         Gson gson = new Gson();
         
-        String json = "";
-
-        json = gson.toJson(mappedResults);
-
-        return json;
+        return gson.toJson(mappedResults);
     }
 
     public String getGraphData(String ticker, String timeframe) 
@@ -123,10 +119,29 @@ public class CryptocurrencyService {
         //serialize into JSON for consumption
         Gson gson = new Gson();
         
-        String json = "";
+        return gson.toJson(mappedResults);
+    }
 
-        json = gson.toJson(mappedResults);
+    public String getMarketData()
+    {
 
-        return json;
+        int sliceCount = 24 * 7;
+
+        ProjectionOperation projectionOperation = Aggregation
+                .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","ath","ath_change_percentage","ath_date","atl","atl_change_percentage","atl_date","weeklyChange","dailyChange","monthlyChange")
+                .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-sliceCount))
+                .as("prices");
+
+        TypedAggregation<CryptocurrencyModel> aggregation = Aggregation.newAggregation(
+                CryptocurrencyModel.class,
+                projectionOperation
+        );
+        AggregationResults<CryptocurrencyModel> results = mongoOperations.aggregate(aggregation, "crypto_prices", CryptocurrencyModel.class);
+        
+        List<CryptocurrencyModel> mappedResults = results.getMappedResults();
+        
+        Gson gson = new Gson();
+        
+        return gson.toJson(mappedResults);
     }
 }

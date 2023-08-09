@@ -26,6 +26,9 @@ public class CryptocurrencyModel {
     private Double atl;
     private Double atl_change_percentage;
     private String atl_date;
+    private Double weeklyChange;
+    private Double dailyChange;
+    private Double monthlyChange;
     private Price[] prices;
   
     public String getId() {
