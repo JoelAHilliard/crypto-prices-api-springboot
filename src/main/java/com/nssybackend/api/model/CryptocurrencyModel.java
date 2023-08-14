@@ -9,7 +9,7 @@ import java.util.List;
 
 import java.time.LocalDateTime;
 
-@Document(collection = "crypto_prices")
+@Document(collection = "crypto_prices_prod")
 public class CryptocurrencyModel {
     @Id
     private String _id;
@@ -29,7 +29,8 @@ public class CryptocurrencyModel {
     private Double weeklyChange;
     private Double dailyChange;
     private Double monthlyChange;
-    private Price[] prices;
+    private String[] timestamps;
+    private Double[] price_points;
   
     public String getId() {
         return this._id;
@@ -55,15 +56,7 @@ public class CryptocurrencyModel {
         this.name = name;
     }
 
-    public Price[] getPrices() {
-        return prices;
-    }
-    public Price getFirstPrice(){
-        return prices[0];
-    }
-    public void setPrices(Price[] prices) {
-        this.prices = prices;
-    }
+    
      public long getMarket_cap() {
         return market_cap;
     }

@@ -33,8 +33,10 @@ public class CryptocurrencyService {
         //create projection and slice operator
         ProjectionOperation projectionOperation = Aggregation
                 .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","ath","ath_change_percentage","ath_date","atl","atl_change_percentage","atl_date","weeklyChange","dailyChange","monthlyChange")
-                .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-1))
-                .as("prices");
+                .and(ArrayOperators.Slice.sliceArrayOf("price_points").itemCount(-1))
+                .as("price_points")
+                .and(ArrayOperators.Slice.sliceArrayOf("timestamps").itemCount(-1))
+                .as("timestamps");
 
         TypedAggregation<CryptocurrencyModel> aggregation = Aggregation.newAggregation(
                 CryptocurrencyModel.class,
@@ -42,7 +44,7 @@ public class CryptocurrencyService {
         );
 
         //perform aggregation
-        AggregationResults<CryptocurrencyModel> results = mongoOperations.aggregate(aggregation, "crypto_prices", CryptocurrencyModel.class);
+        AggregationResults<CryptocurrencyModel> results = mongoOperations.aggregate(aggregation, "crypto_prices_prod", CryptocurrencyModel.class);
         
         List<CryptocurrencyModel> mappedResults = results.getMappedResults();
 
@@ -95,7 +97,7 @@ public class CryptocurrencyService {
         if(sliceCount == -1)
         {
             projectionOperation = Aggregation
-                .project("name","symbol","prices");
+                .project("name","symbol","price_points","timestamps");
         }
         
         else 
@@ -103,8 +105,10 @@ public class CryptocurrencyService {
 
             projectionOperation = Aggregation
                 .project("name","symbol")
-                .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-sliceCount))
-                .as("prices");
+                .and(ArrayOperators.Slice.sliceArrayOf("price_points").itemCount(-sliceCount))
+                .as("price_points")
+                .and(ArrayOperators.Slice.sliceArrayOf("timestamps").itemCount(-sliceCount))
+                .as("timestamps");
         }
         
         Aggregation aggregation = Aggregation.newAggregation(
@@ -112,7 +116,7 @@ public class CryptocurrencyService {
                 projectionOperation
         );
 
-        AggregationResults<CryptocurrencyModel> results = mongoOperations.aggregate(aggregation, "crypto_prices", CryptocurrencyModel.class);
+        AggregationResults<CryptocurrencyModel> results = mongoOperations.aggregate(aggregation, "crypto_prices_prod", CryptocurrencyModel.class);
         
         List<CryptocurrencyModel> mappedResults = results.getMappedResults();
         
@@ -129,14 +133,16 @@ public class CryptocurrencyService {
 
         ProjectionOperation projectionOperation = Aggregation
                 .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","weeklyChange","dailyChange","monthlyChange")
-                .and(ArrayOperators.Slice.sliceArrayOf("prices").itemCount(-sliceCount))
-                .as("prices");
+                .and(ArrayOperators.Slice.sliceArrayOf("price_points").itemCount(-sliceCount))
+                .as("price_points")
+                .and(ArrayOperators.Slice.sliceArrayOf("timestamps").itemCount(-sliceCount))
+                .as("timestamps");
 
         TypedAggregation<CryptocurrencyModel> aggregation = Aggregation.newAggregation(
                 CryptocurrencyModel.class,
                 projectionOperation
         );
-        AggregationResults<CryptocurrencyModel> results = mongoOperations.aggregate(aggregation, "crypto_prices", CryptocurrencyModel.class);
+        AggregationResults<CryptocurrencyModel> results = mongoOperations.aggregate(aggregation, "crypto_prices_prod", CryptocurrencyModel.class);
         
         List<CryptocurrencyModel> mappedResults = results.getMappedResults();
         

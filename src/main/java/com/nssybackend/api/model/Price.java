@@ -6,32 +6,32 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Price 
 {
-    private String timestamp;
-    private Double price;
+    private String timestamps[];
+    private Double price_points[];
     
 
-    public Price(String timestamp, double price) 
+    public Price(String timestamps[], Double prices[]) 
                 {
-        this.timestamp = timestamp;
-        this.price = price;
+        this.timestamps = timestamps;
+        this.price_points = prices;
 
         
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public String[] getTimestamp() {
+        return timestamps;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setTimestamp(String timestamp[]) {
+        this.timestamps = timestamp;
     }
 
-    public double getPrice() {
-        return this.price;
+    public Double[] getPrice() {
+        return this.price_points;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public void setPrice(Double price[]) {
+        this.price_points = price;
     }
 
    
