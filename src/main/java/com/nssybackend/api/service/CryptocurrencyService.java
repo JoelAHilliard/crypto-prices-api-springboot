@@ -3,7 +3,6 @@ package com.nssybackend.api.service;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nssybackend.api.repository.CryptocurrencyRepository;
-
 import org.springframework.stereotype.Service;
 
 import com.nssybackend.api.model.*;
@@ -12,6 +11,7 @@ import com.google.gson.Gson;
 import java.util.List;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.domain.Sort;
 
 import org.springframework.data.mongodb.core.aggregation.*;
 @Service
@@ -40,7 +40,9 @@ public class CryptocurrencyService {
 
         TypedAggregation<CryptocurrencyModel> aggregation = Aggregation.newAggregation(
                 CryptocurrencyModel.class,
-                projectionOperation
+                projectionOperation,
+                Aggregation.sort(Sort.by(Sort.Direction.ASC, "market_cap_rank"))
+
         );
 
         //perform aggregation
@@ -140,8 +142,11 @@ public class CryptocurrencyService {
 
         TypedAggregation<CryptocurrencyModel> aggregation = Aggregation.newAggregation(
                 CryptocurrencyModel.class,
-                projectionOperation
+                projectionOperation,
+                Aggregation.sort(Sort.by(Sort.Direction.ASC, "market_cap_rank"))
         );
+
+
         AggregationResults<CryptocurrencyModel> results = mongoOperations.aggregate(aggregation, "crypto_prices_prod", CryptocurrencyModel.class);
         
         List<CryptocurrencyModel> mappedResults = results.getMappedResults();
