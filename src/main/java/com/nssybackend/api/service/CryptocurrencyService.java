@@ -115,6 +115,7 @@ public class CryptocurrencyService {
                     .project("name","symbol")
                     .and(ArrayOperators.Slice.sliceArrayOf("hourIntervalPrices").itemCount(-sliceCount/6)) // n/6 as there are hourly entries
                     .as("hourIntervalPrices");
+                    
             }
             else
             {
@@ -145,7 +146,9 @@ public class CryptocurrencyService {
         ProjectionOperation projectionOperation = Aggregation
                 .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","weeklyChange","dailyChange","monthlyChange")
                 .and(ArrayOperators.Slice.sliceArrayOf("hourIntervalPrices").itemCount(-24))
-                .as("hourIntervalPrices");
+                .as("hourIntervalPrices")
+                .and(ArrayOperators.Slice.sliceArrayOf("tenMinIntervalPrices").itemCount(-1)) // n/6 as there are hourly entries
+                .as("tenMinIntervalPrices");
 
         TypedAggregation<CryptocurrencyModel> aggregation = Aggregation.newAggregation(
                 CryptocurrencyModel.class,
