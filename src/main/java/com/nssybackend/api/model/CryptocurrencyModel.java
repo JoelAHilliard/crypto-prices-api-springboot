@@ -31,7 +31,9 @@ public class CryptocurrencyModel {
     private Double monthlyChange;
     private String[] timestamps;
     private Double[] price_points;
-  
+    private List<Object[]> tenMinIntervalPrices;
+    private List<Object[]> hourIntervalPrices;
+
     public String getId() {
         return this._id;
     }

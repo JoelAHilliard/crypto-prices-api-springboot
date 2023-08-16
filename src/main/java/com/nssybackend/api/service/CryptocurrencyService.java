@@ -33,10 +33,9 @@ public class CryptocurrencyService {
         //create projection and slice operator
         ProjectionOperation projectionOperation = Aggregation
                 .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","ath","ath_change_percentage","ath_date","atl","atl_change_percentage","atl_date","weeklyChange","dailyChange","monthlyChange")
-                .and(ArrayOperators.Slice.sliceArrayOf("price_points").itemCount(-1))
-                .as("price_points")
-                .and(ArrayOperators.Slice.sliceArrayOf("timestamps").itemCount(-1))
-                .as("timestamps");
+                .and(ArrayOperators.Slice.sliceArrayOf("tenMinIntervalPrices").itemCount(-1))
+                .as("tenMinIntervalPrices");
+                
 
         TypedAggregation<CryptocurrencyModel> aggregation = Aggregation.newAggregation(
                 CryptocurrencyModel.class,
@@ -44,6 +43,8 @@ public class CryptocurrencyService {
                 Aggregation.sort(Sort.by(Sort.Direction.ASC, "market_cap_rank"))
 
         );
+
+        //add logic to get from hourly db instead of 10 minutes db
 
         //perform aggregation
         AggregationResults<CryptocurrencyModel> results = mongoOperations.aggregate(aggregation, "crypto_prices_prod", CryptocurrencyModel.class);
@@ -69,6 +70,8 @@ public class CryptocurrencyService {
         MatchOperation matchOperation = Aggregation.match(criteria);
         
         ProjectionOperation projectionOperation;
+
+        int over24hrs = 0;
         
         //calculte how many documents to return based off timeframe
         
@@ -83,9 +86,11 @@ public class CryptocurrencyService {
                 sliceCount = elementsPerHour * 4;
                 break;
             case "1week":
+                over24hrs = 1;
                 sliceCount = elementsPerHour * 24 * 7;
                 break;
             case "1month":
+                over24hrs = 1;
                 sliceCount = elementsPerHour * 24 * 30; // Assume 30 days in a month
                 break;
             case "max":
@@ -99,18 +104,25 @@ public class CryptocurrencyService {
         if(sliceCount == -1)
         {
             projectionOperation = Aggregation
-                .project("name","symbol","price_points","timestamps");
+                .project("name","symbol","hourIntervalPrices");
         }
         
         else 
         {
-
-            projectionOperation = Aggregation
-                .project("name","symbol")
-                .and(ArrayOperators.Slice.sliceArrayOf("price_points").itemCount(-sliceCount))
-                .as("price_points")
-                .and(ArrayOperators.Slice.sliceArrayOf("timestamps").itemCount(-sliceCount))
-                .as("timestamps");
+            if(over24hrs == 1) //pull from different arr
+            {
+                projectionOperation = Aggregation
+                    .project("name","symbol")
+                    .and(ArrayOperators.Slice.sliceArrayOf("hourIntervalPrices").itemCount(-sliceCount/6)) // n/6 as there are hourly entries
+                    .as("hourIntervalPrices");
+            }
+            else
+            {
+                projectionOperation = Aggregation
+                    .project("name","symbol")
+                    .and(ArrayOperators.Slice.sliceArrayOf("tenMinIntervalPrices").itemCount(-sliceCount))
+                    .as("tenMinIntervalPrices");
+            }
         }
         
         Aggregation aggregation = Aggregation.newAggregation(
@@ -130,15 +142,10 @@ public class CryptocurrencyService {
 
     public String getMarketData()
     {
-
-        int sliceCount = 24 * 7;
-
         ProjectionOperation projectionOperation = Aggregation
                 .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","weeklyChange","dailyChange","monthlyChange")
-                .and(ArrayOperators.Slice.sliceArrayOf("price_points").itemCount(-sliceCount))
-                .as("price_points")
-                .and(ArrayOperators.Slice.sliceArrayOf("timestamps").itemCount(-sliceCount))
-                .as("timestamps");
+                .and(ArrayOperators.Slice.sliceArrayOf("hourIntervalPrices").itemCount(-24))
+                .as("hourIntervalPrices");
 
         TypedAggregation<CryptocurrencyModel> aggregation = Aggregation.newAggregation(
                 CryptocurrencyModel.class,
