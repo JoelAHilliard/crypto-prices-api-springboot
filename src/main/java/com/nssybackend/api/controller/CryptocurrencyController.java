@@ -34,5 +34,10 @@ public class CryptocurrencyController {
     public String marketData()
     {
         return cryptoService.getMarketData();
+    }  
+    @GetMapping("/getNews")
+    public String news()
+    {
+        return cryptoService.getNews();
     }    
 }

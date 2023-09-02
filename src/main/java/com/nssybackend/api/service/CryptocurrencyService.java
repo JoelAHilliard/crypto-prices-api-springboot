@@ -14,8 +14,25 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.domain.Sort;
 
 import org.springframework.data.mongodb.core.aggregation.*;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import java.util.Timer;
+import java.util.TimerTask;
 @Service
 public class CryptocurrencyService {
+
+    private String newsData = null;
+
+    private String marketData = null;
+
+    private long cacheDuration = 600000;
+
+    private long cacheTimestamp = 0;
 
     @Autowired
     MongoOperations mongoOperations;
@@ -143,6 +160,10 @@ public class CryptocurrencyService {
 
     public String getMarketData()
     {
+
+        if(marketData != null){
+            return marketData;
+        }
         ProjectionOperation projectionOperation = Aggregation
                 .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","weeklyChange","dailyChange","monthlyChange")
                 .and(ArrayOperators.Slice.sliceArrayOf("hourIntervalPrices").itemCount(-24))
@@ -162,7 +183,88 @@ public class CryptocurrencyService {
         List<CryptocurrencyModel> mappedResults = results.getMappedResults();
         
         Gson gson = new Gson();
+
+        marketData = gson.toJson(mappedResults);
+
+        scheduleMarketCacheClear();
         
-        return gson.toJson(mappedResults);
+        return marketData;
+    }
+
+    public String getNews()
+    {
+
+        if(newsData != null){
+            return newsData;
+        }
+        try{
+            
+            URL url = new URL("http://api.mediastack.com/v1/news?access_key=eb854c0c7b9e7dcf4ed7b591862e98d1&keywords=crypto&sort=popularity");
+
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            connection.setRequestProperty("accept", "application/json");
+
+            connection.setRequestMethod("GET");
+
+            int responseCode = connection.getResponseCode();
+
+            if (responseCode == 200) {
+                // Create a BufferedReader to read the response
+                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String line;
+                StringBuilder response = new StringBuilder();
+
+                // Read the response line by line
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+
+                // Close the BufferedReader
+                reader.close();
+
+                String res = response.toString();
+
+                newsData = res;
+
+                // Schedule a timer to clear the cache after the cache duration
+                scheduleNewsCacheClear();
+
+                return res;
+            } else {
+                System.out.println("API request failed with response code: " + responseCode);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+        return "";
+    }
+
+    private void scheduleNewsCacheClear() {
+        // Clear the cache after the cache duration
+        cacheTimestamp = System.currentTimeMillis();
+        Timer timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                newsData = null;
+                System.out.println("Cache cleared");
+            }
+        }, cacheDuration);
+    }
+    private void scheduleMarketCacheClear() {
+        // Clear the cache after the cache duration
+        cacheTimestamp = System.currentTimeMillis();
+        Timer timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                marketData = null;
+                System.out.println("Cache cleared");
+            }
+        }, cacheDuration);
     }
 }
