@@ -261,7 +261,7 @@ public class CryptocurrencyService {
             @Override
             public void run() {
                 newsData = null;
-                System.out.println("Cache cleared");
+                System.out.println("NEws Cache cleared");
             }
         }, cacheDuration);
     }
@@ -273,7 +273,7 @@ public class CryptocurrencyService {
             @Override
             public void run() {
                 marketData = null;
-                System.out.println("Cache cleared");
+                System.out.println(" Makret Cache cleared");
             }
         }, cacheDuration);
     }
@@ -285,7 +285,7 @@ public class CryptocurrencyService {
             @Override
             public void run() {
                 priceData = null;
-                System.out.println("Cache cleared");
+                System.out.println("Price Cache cleared");
             }
         }, cacheDuration);
     }
