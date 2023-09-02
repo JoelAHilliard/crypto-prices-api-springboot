@@ -237,7 +237,7 @@ public class CryptocurrencyService {
                     + "&keywords=" + keywords
                     + "&date=" + yesterdayStr + "," + todayStr
                     + "&language=" + language
-                    + "&sort=" + sort;
+                    + "&sort=" + sort
                     + "&limit=" + limit;
 
 
