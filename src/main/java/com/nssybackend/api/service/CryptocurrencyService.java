@@ -52,8 +52,8 @@ public class CryptocurrencyService {
     public String getPriceData() 
     {
 
-        if(priceData){
-            return priceData
+        if(priceData != null){
+            return priceData;
         }
         //create projection and slice operator
         ProjectionOperation projectionOperation = Aggregation
@@ -81,7 +81,7 @@ public class CryptocurrencyService {
 
         priceData = gson.toJson(mappedResults);
         
-        return priceData
+        return priceData;
     }
 
     public String getGraphData(String ticker, String timeframe) 
