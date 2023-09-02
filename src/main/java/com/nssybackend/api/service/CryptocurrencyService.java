@@ -78,7 +78,7 @@ public class CryptocurrencyService {
 
         //serialize into JSON for consumption
         Gson gson = new Gson();
-
+ 
         priceData = gson.toJson(mappedResults);
 
         schedulePriceCacheClear():
