@@ -80,6 +80,8 @@ public class CryptocurrencyService {
         Gson gson = new Gson();
 
         priceData = gson.toJson(mappedResults);
+
+        schedulePriceCacheClear():
         
         return priceData;
     }
