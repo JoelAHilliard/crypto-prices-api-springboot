@@ -211,7 +211,7 @@ public class CryptocurrencyService {
         }
         try{
             
-            URL url = new URL("http://api.mediastack.com/v1/news?access_key=eb854c0c7b9e7dcf4ed7b591862e98d1&keywords=crypto&sort=popularity");
+            URL url = new URL("http://api.mediastack.com/v1/news?access_key=eb854c0c7b9e7dcf4ed7b591862e98d1&keywords=crypto&date=2023-6-1,2023-9-2&language=en&sort=published_desc");
 
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
@@ -255,7 +255,8 @@ public class CryptocurrencyService {
         return "";
     }
 
-    private void scheduleNewsCacheClear() {
+    private void scheduleNewsCacheClear() 
+    {
         // Clear the cache after the cache duration
         newsCacheTimestamp = System.currentTimeMillis();
         Timer timer = new Timer(true);
@@ -267,7 +268,9 @@ public class CryptocurrencyService {
             }
         }, cacheDuration);
     }
-    private void scheduleMarketCacheClear() {
+
+    private void scheduleMarketCacheClear() 
+    {
         // Clear the cache after the cache duration
         marketCacheTimestamp = System.currentTimeMillis();
         Timer timer = new Timer(true);
@@ -279,7 +282,9 @@ public class CryptocurrencyService {
             }
         }, cacheDuration);
     }
-    private void schedulePriceCacheClear() {
+
+    private void schedulePriceCacheClear() 
+    {
         // Clear the cache after the cache duration
         priceCacheTimestamp = System.currentTimeMillis();
         Timer timer = new Timer(true);
