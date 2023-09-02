@@ -23,6 +23,10 @@ import java.net.URL;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Calendar;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
 @Service
 public class CryptocurrencyService {
 
@@ -210,9 +214,32 @@ public class CryptocurrencyService {
             return newsData;
         }
         try{
-            
-            URL url = new URL("http://api.mediastack.com/v1/news?access_key=eb854c0c7b9e7dcf4ed7b591862e98d1&keywords=crypto&date=2023-6-1,2023-9-2&language=en&sort=published_desc");
+            Calendar calendar = Calendar.getInstance();
+            Date today = calendar.getTime();
 
+            // Calculate yesterday's date
+            calendar.add(Calendar.DATE, -1);
+            Date yesterday = calendar.getTime();
+
+            // Format the dates as yyyy-MM-dd strings
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String yesterdayStr = dateFormat.format(yesterday);
+            String todayStr = dateFormat.format(today);
+
+            // Construct the dynamic URL
+            String accessKey = "eb854c0c7b9e7dcf4ed7b591862e98d1";
+            String keywords = "crypto";
+            String language = "en";
+            String sort = "popularity";
+
+            String urlString = "http://api.mediastack.com/v1/news?access_key=" + accessKey
+                    + "&keywords=" + keywords
+                    + "&date=" + yesterdayStr + "," + todayStr
+                    + "&language=" + language
+                    + "&sort=" + sort;
+
+            URL url = new URL(urlString);
+            
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             connection.setRequestProperty("accept", "application/json");
