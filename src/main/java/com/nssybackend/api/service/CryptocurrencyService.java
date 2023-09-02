@@ -30,9 +30,13 @@ public class CryptocurrencyService {
 
     private String marketData = null;
 
+    private String priceData = null;
+
     private long cacheDuration = 600000;
 
-    private long cacheTimestamp = 0;
+    private long newsCacheTimestamp = 0;
+    private long marketCacheTimestamp = 0;
+    private long priceCacheTimestamp = 0;
 
     @Autowired
     MongoOperations mongoOperations;
@@ -47,6 +51,10 @@ public class CryptocurrencyService {
     //returns all cryptos with name, symbol and the most recent price entry.
     public String getPriceData() 
     {
+
+        if(priceData){
+            return priceData
+        }
         //create projection and slice operator
         ProjectionOperation projectionOperation = Aggregation
                 .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","ath","ath_change_percentage","ath_date","atl","atl_change_percentage","atl_date","weeklyChange","dailyChange","monthlyChange")
@@ -70,8 +78,10 @@ public class CryptocurrencyService {
 
         //serialize into JSON for consumption
         Gson gson = new Gson();
+
+        priceData = gson.toJson(mappedResults);
         
-        return gson.toJson(mappedResults);
+        return priceData
     }
 
     public String getGraphData(String ticker, String timeframe) 
@@ -245,7 +255,7 @@ public class CryptocurrencyService {
 
     private void scheduleNewsCacheClear() {
         // Clear the cache after the cache duration
-        cacheTimestamp = System.currentTimeMillis();
+        newsCacheTimestamp = System.currentTimeMillis();
         Timer timer = new Timer(true);
         timer.schedule(new TimerTask() {
             @Override
@@ -257,7 +267,7 @@ public class CryptocurrencyService {
     }
     private void scheduleMarketCacheClear() {
         // Clear the cache after the cache duration
-        cacheTimestamp = System.currentTimeMillis();
+        marketCacheTimestamp = System.currentTimeMillis();
         Timer timer = new Timer(true);
         timer.schedule(new TimerTask() {
             @Override
@@ -267,4 +277,17 @@ public class CryptocurrencyService {
             }
         }, cacheDuration);
     }
+    private void schedulePriceCacheClear() {
+        // Clear the cache after the cache duration
+        priceCacheTimestamp = System.currentTimeMillis();
+        Timer timer = new Timer(true);
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                priceData = null;
+                System.out.println("Cache cleared");
+            }
+        }, cacheDuration);
+    }
+    
 }
