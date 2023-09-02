@@ -81,7 +81,7 @@ public class CryptocurrencyService {
  
         priceData = gson.toJson(mappedResults);
 
-        schedulePriceCacheClear():
+        schedulePriceCacheClear();
         
         return priceData;
     }
