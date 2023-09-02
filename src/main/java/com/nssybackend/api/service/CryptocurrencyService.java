@@ -221,7 +221,6 @@ public class CryptocurrencyService {
             calendar.add(Calendar.DATE, -1);
             Date yesterday = calendar.getTime();
 
-            // Format the dates as yyyy-MM-dd strings
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             String yesterdayStr = dateFormat.format(yesterday);
             String todayStr = dateFormat.format(today);
@@ -231,12 +230,16 @@ public class CryptocurrencyService {
             String keywords = "crypto";
             String language = "en";
             String sort = "popularity";
+            String limit = "10";
+
 
             String urlString = "http://api.mediastack.com/v1/news?access_key=" + accessKey
                     + "&keywords=" + keywords
                     + "&date=" + yesterdayStr + "," + todayStr
                     + "&language=" + language
                     + "&sort=" + sort;
+                    + "&limit=" + limit;
+
 
             URL url = new URL(urlString);
             
