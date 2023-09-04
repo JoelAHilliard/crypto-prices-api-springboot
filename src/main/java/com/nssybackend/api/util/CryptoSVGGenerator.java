@@ -46,6 +46,12 @@ public class CryptoSVGGenerator {
 
     // Normalize function
     public static double normalize(double value, double min, double max, double newMin, double newMax) {
+        // Add some padding to min and max values
+        double padding = (max - min) * 0.1;
+        min -= padding;
+        max += padding;
+
         return newMin + ((value - min) / (max - min)) * (newMax - newMin);
     }
+
 }
