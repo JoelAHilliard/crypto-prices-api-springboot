@@ -58,6 +58,10 @@ public class CryptocurrencyModel {
         return symbol;
     }
 
+    public void clearIntervalPrices() {
+        this.hourIntervalPrices = null;
+    }
+
     public void setSymbol(String symbol) {
         this.symbol = symbol;
     }

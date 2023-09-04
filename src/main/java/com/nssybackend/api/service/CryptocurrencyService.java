@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.nssybackend.api.repository.CryptocurrencyRepository;
 import org.springframework.stereotype.Service;
-
+import javax.annotation.PostConstruct;
 import com.nssybackend.api.model.*;
 import com.nssybackend.api.util.*;
 
@@ -44,8 +44,10 @@ public class CryptocurrencyService {
     private long marketCacheTimestamp = 0;
     private long priceCacheTimestamp = 0;
 
+    
+
     @Autowired
-    MongoOperations mongoOperations;
+    private MongoOperations mongoOperations;
 
     private final CryptocurrencyRepository cryptocurrencyRepository;
 
@@ -53,7 +55,10 @@ public class CryptocurrencyService {
     public CryptocurrencyService(CryptocurrencyRepository cryptocurrencyRepository) {
         this.cryptocurrencyRepository = cryptocurrencyRepository;
     }
-
+    @PostConstruct
+    public void init() {
+        this.marketData = fetchAndParseMarketData();
+    }
     //returns all cryptos with name, symbol and the most recent price entry.
     public String getPriceData() 
     {
@@ -176,15 +181,10 @@ public class CryptocurrencyService {
         return gson.toJson(mappedResults);
     }
 
-    public String getMarketData()
-    {
-
-        if(marketData != null){
-            return marketData;
-        }
+    public String fetchAndParseMarketData(){
         ProjectionOperation projectionOperation = Aggregation
                 .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","weeklyChange","dailyChange","monthlyChange")
-                .and(ArrayOperators.Slice.sliceArrayOf("hourIntervalPrices").itemCount(-24))
+                .and(ArrayOperators.Slice.sliceArrayOf("hourIntervalPrices").itemCount(-(24 * 7)))
                 .as("hourIntervalPrices")
                 .and(ArrayOperators.Slice.sliceArrayOf("tenMinIntervalPrices").itemCount(-1)) // n/6 as there are hourly entries
                 .as("tenMinIntervalPrices");
@@ -207,6 +207,8 @@ public class CryptocurrencyService {
 
             String color = "grey";
 
+            
+
             Double dailyChange = crypto.getDailyChange();
 
             if(dailyChange != null && dailyChange > 0){
@@ -215,15 +217,23 @@ public class CryptocurrencyService {
             else if(dailyChange != null && dailyChange < 0){
                 color = "red";
             }
-
             crypto.setSvg(CryptoSVGGenerator.generateSVG(hourprices,color));
+            crypto.clearIntervalPrices();
         }
 
         marketData = gson.toJson(mappedResults);
 
-        scheduleMarketCacheClear();
-        
         return marketData;
+    }
+    public String getMarketData()
+    {
+        scheduleMarketCacheClear();
+
+        if(marketData != null){
+            return marketData;
+        }
+        
+        return fetchAndParseMarketData();
     }
 
     public String getNews()
@@ -326,7 +336,7 @@ public class CryptocurrencyService {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                marketData = null;
+                marketData = fetchAndParseMarketData();
                 System.out.println(" Makret Cache cleared");
             }
         }, cacheDuration);
