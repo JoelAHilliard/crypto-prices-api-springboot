@@ -24,21 +24,17 @@ public class CryptoSVGGenerator {
 
     // Begin the SVG element (Removed whitespaces)
     svg.append("<svg width=\"").append((int) svgWidth).append("\" height=\"").append((int) svgHeight).append("\" xmlns=\"http://www.w3.org/2000/svg\">");
-    int counter = 0;
     for (int i = 0; i < hourlyPrices.size(); i++) {
-        if(i % 6 == 0 || i == 0){
-            double x = i * 2;
-            double normalizedX = normalize(x, minHour, maxHour, 0, svgWidth); // Normalized x
-            double price = ((Number) hourlyPrices.get(i)[0]).doubleValue();
-            double y = normalize(price, minPrice, maxPrice, 0, svgHeight);
-            // Append points for polyline (Reduced to 1 decimal point)
-            points.append(String.format("%.1f,%.1f", normalizedX, svgHeight - y));
-            if (i != hourlyPrices.size() - 1) {
-                points.append(" ");
-            }
+        double x = i * 2;
+        double normalizedX = normalize(x, minHour, maxHour, 0, svgWidth); // Normalized x
+        double price = ((Number) hourlyPrices.get(i)[0]).doubleValue();
+        double y = normalize(price, minPrice, maxPrice, 0, svgHeight);
+        // Append points for polyline (Reduced to 1 decimal point)
+        points.append(String.format("%.1f,%.1f", normalizedX, svgHeight - y));
+        if (i != hourlyPrices.size() - 1) {
+            points.append(" ");
         }
     }
-    System.out.println(counter);
 
 
     // Draw polyline (Removed whitespaces)
@@ -46,6 +42,8 @@ public class CryptoSVGGenerator {
 
     // End the SVG element (Removed whitespaces)
     svg.append("</svg>");
+
+    System.out.println(svg);
 
     return svg.toString();
 }
