@@ -7,7 +7,7 @@ public class CryptoSVGGenerator {
     public static String generateSVG(List<Object[]> hourlyPrices, String color) {
     StringBuilder svg = new StringBuilder();
     StringBuilder points = new StringBuilder();
-    double svgHeight = 65.0;
+    double svgHeight = 45.0;
     double svgWidth = 100.0;
 
     double minPrice = Double.MAX_VALUE;
@@ -26,7 +26,7 @@ public class CryptoSVGGenerator {
         double x = i * 10;
 
         double price = ((Number) hourlyPrices.get(i)[0]).doubleValue();
-        double y = normalize(price, minPrice, maxPrice, 0, svgHeight)*2;
+        double y = normalize(price, minPrice, maxPrice, 0, svgHeight);
 
         // Append points for polyline (Reduced to 1 decimal point)
         points.append(String.format("%.1f,%.1f", x, svgHeight - y));
