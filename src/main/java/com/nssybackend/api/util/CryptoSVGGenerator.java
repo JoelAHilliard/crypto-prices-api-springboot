@@ -27,7 +27,6 @@ public class CryptoSVGGenerator {
 
         double price = ((Number) hourlyPrices.get(i)[0]).doubleValue();
         double y = normalize(price, minPrice, maxPrice, 0, svgHeight);
-
         // Append points for polyline (Reduced to 1 decimal point)
         points.append(String.format("%.1f,%.1f", x, svgHeight - y));
         if (i != hourlyPrices.size() - 1) {

@@ -184,7 +184,7 @@ public class CryptocurrencyService {
     public String fetchAndParseMarketData(){
         ProjectionOperation projectionOperation = Aggregation
                 .project("name","symbol","market_cap","market_cap_rank","circulating_supply","total_supply","weeklyChange","dailyChange","monthlyChange")
-                .and(ArrayOperators.Slice.sliceArrayOf("hourIntervalPrices").itemCount(-(24 * 7)))
+                .and(ArrayOperators.Slice.sliceArrayOf("hourIntervalPrices").itemCount(-(24 * 7 * 6)))
                 .as("hourIntervalPrices")
                 .and(ArrayOperators.Slice.sliceArrayOf("tenMinIntervalPrices").itemCount(-1)) // n/6 as there are hourly entries
                 .as("tenMinIntervalPrices");
