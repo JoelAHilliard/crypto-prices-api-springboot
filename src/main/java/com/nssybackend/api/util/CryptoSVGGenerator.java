@@ -6,8 +6,8 @@ import java.util.List;
 public class CryptoSVGGenerator {
     public static String generateSVG(List<Object[]> hourlyPrices) {
         StringBuilder svg = new StringBuilder();
-        double svgHeight = 95.0;
-        double svgWidth = 245.0;
+        double svgHeight = 45.0;
+        double svgWidth = 100.0;
 
         String color = "red";
 
