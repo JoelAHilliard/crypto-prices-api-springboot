@@ -25,7 +25,7 @@ public class CryptoSVGGenerator {
     // Begin the SVG element (Removed whitespaces)
     svg.append("<svg width=\"").append((int) svgWidth).append("\" height=\"").append((int) svgHeight).append("\" xmlns=\"http://www.w3.org/2000/svg\">");
     for (int i = 0; i < hourlyPrices.size(); i++) {
-        double normalizedX = normalize(x, minHour, maxHour, 0, svgWidth); // Normalized x
+        double normalizedX = normalize(i, minHour, maxHour, 0, svgWidth); // Normalized x
         double price = ((Number) hourlyPrices.get(i)[0]).doubleValue();
         double y = normalize(price, minPrice, maxPrice, 0, svgHeight);
         // Append points for polyline (Reduced to 1 decimal point)
