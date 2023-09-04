@@ -7,7 +7,7 @@ public class CryptoSVGGenerator {
     public static String generateSVG(List<Object[]> hourlyPrices, String color) {
     StringBuilder svg = new StringBuilder();
     StringBuilder points = new StringBuilder();
-    double svgHeight = 45.0;
+    double svgHeight = 65.0;
     double svgWidth = 100.0;
 
     double minPrice = Double.MAX_VALUE;
