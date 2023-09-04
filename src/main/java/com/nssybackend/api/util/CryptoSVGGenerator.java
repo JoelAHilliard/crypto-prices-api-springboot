@@ -5,8 +5,10 @@ import java.io.StringWriter;
 import java.util.List;
 public class CryptoSVGGenerator {
     public static String generateSVG(List<Object[]> hourlyPrices, String color) {
+    
     StringBuilder svg = new StringBuilder();
     StringBuilder points = new StringBuilder();
+
     double svgHeight = 45.0;
     double svgWidth = 100.0;
 
@@ -25,14 +27,15 @@ public class CryptoSVGGenerator {
     // Begin the SVG element (Removed whitespaces)
     svg.append("<svg width=\"").append((int) svgWidth).append("\" height=\"").append((int) svgHeight).append("\" xmlns=\"http://www.w3.org/2000/svg\">");
     for (int i = 0; i < hourlyPrices.size(); i++) {
-        double normalizedX = normalize(i, minHour, maxHour, 0, svgWidth); // Normalized x
-        double price = ((Number) hourlyPrices.get(i)[0]).doubleValue();
-        double y = normalize(price, minPrice, maxPrice, 0, svgHeight);
-        // Append points for polyline (Reduced to 1 decimal point)
-        points.append(String.format("%.1f,%.1f", normalizedX, svgHeight - y));
-        if (i != hourlyPrices.size() - 1) {
-            points.append(" ");
-        }
+            double x = i * 2;
+            double normalizedX = normalize(x, minHour, maxHour, 0, svgWidth); // Normalized x
+            double price = ((Number) hourlyPrices.get(i)[0]).doubleValue();
+            double y = normalize(price, minPrice, maxPrice, 0, svgHeight);
+            // Append points for polyline (Reduced to 1 decimal point)
+            points.append(String.format("%.1f,%.1f", normalizedX, svgHeight - y));
+            if (i != hourlyPrices.size() - 1) {
+                points.append(" ");
+            }
     }
 
 
@@ -41,8 +44,6 @@ public class CryptoSVGGenerator {
 
     // End the SVG element (Removed whitespaces)
     svg.append("</svg>");
-
-    System.out.println(svg);
 
     return svg.toString();
 }
