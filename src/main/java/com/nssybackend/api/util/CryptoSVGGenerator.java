@@ -17,16 +17,20 @@ public class CryptoSVGGenerator {
         double firstPrice = 0.0;
         double lastPrice = 0.0;
 
-        if (firstPriceObject instanceof Integer) {
-            firstPrice = ((Integer) firstPriceObject).doubleValue();
-        } else if (firstPriceObject instanceof Double) {
-            firstPrice = ((Double) firstPriceObject);
-        }
-        if (lastPriceObject instanceof Integer) {
-            lastPrice = ((Integer) lastPriceObject).doubleValue();
-        } else if (lastPriceObject instanceof Double) {
-            lastPrice = (Double) lastPriceObject;
-        }
+        firstPrice = ((Number) firstPriceObject).doubleValue();
+        lastPrice = ((Number) lastPriceObject).doubleValue();
+
+
+        // if (firstPriceObject instanceof Integer) {
+        //     firstPrice = ((Integer) firstPriceObject).doubleValue();
+        // } else if (firstPriceObject instanceof Double) {
+        //     firstPrice = ((Double) firstPriceObject);
+        // }
+        // if (lastPriceObject instanceof Integer) {
+        //     lastPrice = ((Integer) lastPriceObject).doubleValue();
+        // } else if (lastPriceObject instanceof Double) {
+        //     lastPrice = (Double) lastPriceObject;
+        // }
 
         if(firstPrice > lastPrice){
             color ="green";
