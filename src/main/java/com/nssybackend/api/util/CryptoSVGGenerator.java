@@ -23,15 +23,18 @@ public class CryptoSVGGenerator {
     svg.append("<svg width=\"").append((int) svgWidth).append("\" height=\"").append((int) svgHeight).append("\" xmlns=\"http://www.w3.org/2000/svg\">");
 
     for (int i = 0; i < hourlyPrices.size(); i++) {
-        double x = i*2;
+        if(i % 24 == 0 || i = 0){
+            double x = i*2;
 
-        double price = ((Number) hourlyPrices.get(i)[0]).doubleValue();
-        double y = normalize(price, minPrice, maxPrice, 0, svgHeight);
-        // Append points for polyline (Reduced to 1 decimal point)
-        points.append(String.format("%.1f,%.1f", x, svgHeight - y));
-        if (i != hourlyPrices.size() - 1) {
-            points.append(" ");
+            double price = ((Number) hourlyPrices.get(i)[0]).doubleValue();
+            double y = normalize(price, minPrice, maxPrice, 0, svgHeight);
+            // Append points for polyline (Reduced to 1 decimal point)
+            points.append(String.format("%.1f,%.1f", x, svgHeight - y));
+            if (i != hourlyPrices.size() - 1) {
+                points.append(" ");
+            }
         }
+        
     }
 
     // Draw polyline (Removed whitespaces)
