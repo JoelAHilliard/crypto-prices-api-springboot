@@ -33,7 +33,16 @@ public class CryptocurrencyModel {
     private Double[] price_points;
     private List<Object[]> tenMinIntervalPrices;
     private List<Object[]> hourIntervalPrices;
-
+    private String svg;
+    public void setSvg(String svg){
+        this.svg = svg;
+    }
+    public String getSvg(){
+        return this.svg;
+    }
+    public List<Object[]> getHourPrices(){
+        return hourIntervalPrices;
+    }
     public String getId() {
         return this._id;
     }

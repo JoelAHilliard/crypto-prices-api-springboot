@@ -6,6 +6,8 @@ import com.nssybackend.api.repository.CryptocurrencyRepository;
 import org.springframework.stereotype.Service;
 
 import com.nssybackend.api.model.*;
+import com.nssybackend.api.util.*;
+
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -199,6 +201,12 @@ public class CryptocurrencyService {
         List<CryptocurrencyModel> mappedResults = results.getMappedResults();
         
         Gson gson = new Gson();
+
+        for (CryptocurrencyModel crypto: mappedResults){
+            List<Object[]> hourprices = crypto.getHourPrices();
+
+            crypto.setSvg(CryptoSVGGenerator.generateSVG(hourprices));
+        }
 
         marketData = gson.toJson(mappedResults);
 
