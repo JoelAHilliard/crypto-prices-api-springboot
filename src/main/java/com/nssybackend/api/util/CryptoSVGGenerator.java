@@ -4,57 +4,50 @@ package com.nssybackend.api.util;
 import java.io.StringWriter;
 import java.util.List;
 public class CryptoSVGGenerator {
-    public static String generateSVG(List<Object[]> hourlyPrices,String color) {
-        StringBuilder svg = new StringBuilder();
-        double svgHeight = 45.0;
-        double svgWidth = 100.0;
+    public static String generateSVG(List<Object[]> hourlyPrices, String color) {
+    StringBuilder svg = new StringBuilder();
+    StringBuilder points = new StringBuilder();
+    double svgHeight = 45.0;
+    double svgWidth = 100.0;
 
-        Object firstPriceObject = hourlyPrices.get(0)[0];
-        Object lastPriceObject = hourlyPrices.get(hourlyPrices.size()-1)[0];
+    double minPrice = Double.MAX_VALUE;
+    double maxPrice = Double.MIN_VALUE;
 
-        double firstPrice = 0.0;
-        double lastPrice = 0.0;
-
-        firstPrice = ((Number) firstPriceObject).doubleValue();
-        lastPrice = ((Number) lastPriceObject).doubleValue();
-        
-        // Find min and max price for normalization
-        double minPrice = Double.MAX_VALUE;
-        double maxPrice = Double.MIN_VALUE;
-        for (Object[] data : hourlyPrices) {
-            double price = ((Number) data[0]).doubleValue();
-            minPrice = Math.min(minPrice, price);
-            maxPrice = Math.max(maxPrice, price);
-        }
-        
-        
-
-        // Begin the SVG element
-        svg.append("<svg width=\"").append(svgWidth).append("\" height=\"").append(svgHeight).append("\" xmlns=\"http://www.w3.org/2000/svg\">\n");
-        
-        // Draw lines between points
-        double previousX = 0, previousY = 0;
-        for (int i = 0; i < hourlyPrices.size(); i++) {
-            double x = i * 10; // Spacing of 10 units between points
-            
-            // Normalize the price to fit within SVG height
-            double price = ((Number) hourlyPrices.get(i)[0]).doubleValue();
-            double y = normalize(price, minPrice, maxPrice, 0, svgHeight);
-            
-            if (i != 0) {
-                svg.append(String.format("  <line x1=\"%f\" y1=\"%f\" x2=\"%f\" y2=\"%f\" stroke=\""+color+"\"/>\n", previousX, svgHeight - previousY, x, svgHeight - y));
-            }
-            previousX = x;
-            previousY = y;
-        }
-        
-        // End the SVG element
-        svg.append("</svg>");
-        
-        return svg.toString();
+    for (Object[] data : hourlyPrices) {
+        double price = ((Number) data[0]).doubleValue();
+        minPrice = Math.min(minPrice, price);
+        maxPrice = Math.max(maxPrice, price);
     }
+
+    // Begin the SVG element (Removed whitespaces)
+    svg.append("<svg width=\"").append((int) svgWidth).append("\" height=\"").append((int) svgHeight).append("\" xmlns=\"http://www.w3.org/2000/svg\">");
+
+    for (int i = 0; i < hourlyPrices.size(); i++) {
+        double x = i * 10;
+
+        double price = ((Number) hourlyPrices.get(i)[0]).doubleValue();
+        double y = normalize(price, minPrice, maxPrice, 0, svgHeight);
+
+        // Append points for polyline (Reduced to 1 decimal point)
+        points.append(String.format("%.1f,%.1f", x, svgHeight - y));
+        if (i != hourlyPrices.size() - 1) {
+            points.append(" ");
+        }
+    }
+
+    // Draw polyline (Removed whitespaces)
+    svg.append("<polyline points=\"").append(points.toString()).append("\" stroke=\"").append(color).append("\" fill=\"none\"/>");
+
+    // End the SVG element (Removed whitespaces)
+    svg.append("</svg>");
+
+    return svg.toString();
+}
+
     // Normalize function
     public static double normalize(double value, double min, double max, double newMin, double newMax) {
+        // Add some padding to min and max values
         return newMin + ((value - min) / (max - min)) * (newMax - newMin);
     }
+
 }
