@@ -4,12 +4,10 @@ package com.nssybackend.api.util;
 import java.io.StringWriter;
 import java.util.List;
 public class CryptoSVGGenerator {
-    public static String generateSVG(List<Object[]> hourlyPrices) {
+    public static String generateSVG(List<Object[]> hourlyPrices,String color) {
         StringBuilder svg = new StringBuilder();
         double svgHeight = 45.0;
         double svgWidth = 100.0;
-
-        String color = "red";
 
         Object firstPriceObject = hourlyPrices.get(0)[0];
         Object lastPriceObject = hourlyPrices.get(hourlyPrices.size()-1)[0];
@@ -19,22 +17,6 @@ public class CryptoSVGGenerator {
 
         firstPrice = ((Number) firstPriceObject).doubleValue();
         lastPrice = ((Number) lastPriceObject).doubleValue();
-
-
-        // if (firstPriceObject instanceof Integer) {
-        //     firstPrice = ((Integer) firstPriceObject).doubleValue();
-        // } else if (firstPriceObject instanceof Double) {
-        //     firstPrice = ((Double) firstPriceObject);
-        // }
-        // if (lastPriceObject instanceof Integer) {
-        //     lastPrice = ((Integer) lastPriceObject).doubleValue();
-        // } else if (lastPriceObject instanceof Double) {
-        //     lastPrice = (Double) lastPriceObject;
-        // }
-
-        if(firstPrice > lastPrice){
-            color ="green";
-        }
         
         // Find min and max price for normalization
         double minPrice = Double.MAX_VALUE;

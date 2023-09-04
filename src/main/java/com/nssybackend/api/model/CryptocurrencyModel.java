@@ -50,6 +50,9 @@ public class CryptocurrencyModel {
     public void setId(String id) {
         this._id = id;
     }
+    public Double getDailyChange() {
+        return this.dailyChange;
+    }
 
     public String getSymbol() {
         return symbol;

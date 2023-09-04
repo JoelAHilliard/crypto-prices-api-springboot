@@ -205,7 +205,18 @@ public class CryptocurrencyService {
         for (CryptocurrencyModel crypto: mappedResults){
             List<Object[]> hourprices = crypto.getHourPrices();
 
-            crypto.setSvg(CryptoSVGGenerator.generateSVG(hourprices));
+            String color = "grey";
+
+            Double dailyChange = crypto.getDailyChange();
+
+            if(dailyChange != null && dailyChange > 0){
+                color = "green";
+            }
+            else if(dailyChange != null && dailyChange < 0){
+                color = "red";
+            }
+
+            crypto.setSvg(CryptoSVGGenerator.generateSVG(hourprices,color));
         }
 
         marketData = gson.toJson(mappedResults);
