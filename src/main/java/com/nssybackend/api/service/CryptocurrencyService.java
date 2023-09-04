@@ -207,14 +207,12 @@ public class CryptocurrencyService {
 
             String color = "grey";
 
-            
+            Double weeklyChange = crypto.getWeeklyChange();
 
-            Double dailyChange = crypto.getDailyChange();
-
-            if(dailyChange != null && dailyChange > 0){
+            if(weeklyChange != null && weeklyChange > 0){
                 color = "green";
             }
-            else if(dailyChange != null && dailyChange < 0){
+            else if(weeklyChange != null && weeklyChange < 0){
                 color = "red";
             }
             crypto.setSvg(CryptoSVGGenerator.generateSVG(hourprices,color));

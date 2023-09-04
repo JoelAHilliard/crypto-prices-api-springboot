@@ -53,6 +53,9 @@ public class CryptocurrencyModel {
     public Double getDailyChange() {
         return this.dailyChange;
     }
+    public Double getWeeklyChange() {
+        return this.weeklyChange;
+    }
 
     public String getSymbol() {
         return symbol;
