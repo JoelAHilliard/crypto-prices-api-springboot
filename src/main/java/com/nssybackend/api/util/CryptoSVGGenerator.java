@@ -13,6 +13,9 @@ public class CryptoSVGGenerator {
     double minPrice = Double.MAX_VALUE;
     double maxPrice = Double.MIN_VALUE;
 
+    double minHour = 0;
+    double maxHour = (hourlyPrices.size() - 1) * 2;
+
     for (Object[] data : hourlyPrices) {
         double price = ((Number) data[0]).doubleValue();
         minPrice = Math.min(minPrice, price);
@@ -21,21 +24,22 @@ public class CryptoSVGGenerator {
 
     // Begin the SVG element (Removed whitespaces)
     svg.append("<svg width=\"").append((int) svgWidth).append("\" height=\"").append((int) svgHeight).append("\" xmlns=\"http://www.w3.org/2000/svg\">");
-
+    int counter = 0;
     for (int i = 0; i < hourlyPrices.size(); i++) {
-        if(i % 24 == 0 || i == 0){
-            double x = i*2;
-
+        if(i % 6 == 0 || i == 0){
+            double x = i * 2;
+            double normalizedX = normalize(x, minHour, maxHour, 0, svgWidth); // Normalized x
             double price = ((Number) hourlyPrices.get(i)[0]).doubleValue();
             double y = normalize(price, minPrice, maxPrice, 0, svgHeight);
             // Append points for polyline (Reduced to 1 decimal point)
-            points.append(String.format("%.1f,%.1f", x, svgHeight - y));
+            points.append(String.format("%.1f,%.1f", normalizedX, svgHeight - y));
             if (i != hourlyPrices.size() - 1) {
                 points.append(" ");
             }
         }
-        
     }
+    System.out.println(counter);
+
 
     // Draw polyline (Removed whitespaces)
     svg.append("<polyline points=\"").append(points.toString()).append("\" stroke=\"").append(color).append("\" fill=\"none\"/>");
